@@ -1,0 +1,27 @@
+{
+  "name": "u-semver",
+  "version": "0.1.0",
+  "description": "A micro parser and version resolver for Semantic Version",
+  "main": "dist/u-semver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alanrsoares/u-semver.git"
+  },
+  "keywords": [
+    "SemVer",
+    "semver",
+    "parser",
+    "resolver",
+    "semantic",
+    "versioning"
+  ],
+  "author": "github.com/alanrsoares",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alanrsoares/u-semver/issues"
+  },
+  "homepage": "https://github.com/alanrsoares/u-semver#readme"
+}
