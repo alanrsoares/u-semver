@@ -14,6 +14,7 @@ $ bower install u-version
 ```
 
 ## Usage
+> SemVer.resolve(range: String, versions: String[], preRelease: Boolean?)
 ```javascript
 var versions = [
   '1.0.1',
@@ -27,6 +28,7 @@ var versions = [
   '0.0.12',
   '0.0.13-pre'
 ];
+
 // resolving a specific version
 SemVer.resolve('1.1.9', versions) //=> '1.1.9'
 // resolving a patch range
