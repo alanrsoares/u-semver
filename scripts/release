@@ -1,0 +1,3 @@
+releasy=./node_modules/.bin/releasy
+$releasy -sf bower.json --stable --no-tag --no-push
+$releasy -s --stable

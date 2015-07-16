@@ -5,7 +5,8 @@
   "main": "dist/u-semver.js",
   "scripts": {
     "test": "mocha specs --compilers js:babel/register",
-    "dist": "scripts/dist"
+    "dist": "scripts/dist",
+    "release": "scripts/dist && scripts/release",
   },
   "repository": {
     "type": "git",
