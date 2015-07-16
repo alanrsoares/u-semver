@@ -44,3 +44,6 @@ SemVer.resolve('^0.1.0', versions, true) //=> '0.2.4'
 // deny pre-release resolution
 SemVer.resolve('^0.1.0', versions, false) //=> '0.2.0'
 ```
+
+## License
+MIT
