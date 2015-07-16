@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha specs --compilers js:babel/register",
     "dist": "scripts/dist",
-    "release": "scripts/dist && scripts/release",
+    "release": "scripts/dist && scripts/release"
   },
   "repository": {
     "type": "git",
