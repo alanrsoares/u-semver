@@ -1,3 +1,7 @@
+if (!exports) {
+  const exports = {};
+}
+
 let find = (xs, fn) => xs.filter(fn)[0];
 
 let findLatest = (xs) => xs.sort().reverse()[0];
@@ -7,7 +11,7 @@ let findPattern = (xs, pattern) => {
   return findLatest(xs.filter(::RX.test));
 };
 
-export const resolve = (range, versions, pre) => {
+const resolve = (range, versions, pre) => {
   if (range === 'latest') {
     return findLatest(versions);
   }
@@ -28,3 +32,7 @@ export const resolve = (range, versions, pre) => {
     ? findPattern(versions, pattern + '(-(\\w+))?$')
     : findPattern(versions, pattern + '$');
 };
+
+const SemVer = { resolve };
+
+export default SemVer;

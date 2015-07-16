@@ -5,8 +5,7 @@
   "main": "dist/u-semver.js",
   "scripts": {
     "test": "mocha specs --compilers js:babel/register",
-    "dist": "babel src/u-semver.js -o dist/u-semver.js",
-    "dist-browser": "babel src/u-semver.js | uglifyjs -cmo dist/u-semver.browser.js -"
+    "dist": "scripts/dist"
   },
   "repository": {
     "type": "git",

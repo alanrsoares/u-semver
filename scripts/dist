@@ -1,0 +1,5 @@
+babel=./node_modules/.bin/babel
+uglifyjs=./node_modules/.bin/uglifyjs
+$babel src/u-semver.js -o dist/u-semver.js
+$babel src/u-semver.js | $uglifyjs -cmo dist/u-semver.browser.js -
+echo "finished building"
