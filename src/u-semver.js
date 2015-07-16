@@ -1,7 +1,3 @@
-if (!exports) {
-  const exports = {};
-}
-
 let find = (xs, fn) => xs.filter(fn)[0];
 
 let findLatest = (xs) => xs.sort().reverse()[0];
