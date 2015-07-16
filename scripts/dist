@@ -6,4 +6,4 @@ cat dist/u-semver.js\
 | sed -e '/^module.exports/d'\
 | sed -e '/exports\[/d'\
 | sed -e 's/exports/{}/g'\
-| $uglifyjs -cmo dist/u-semver.browser.js -
+| $uglifyjs --screw-ie8 -cmo dist/u-semver.browser.js -
