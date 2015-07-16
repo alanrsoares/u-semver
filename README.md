@@ -1,12 +1,14 @@
 # μ-semver
 A micro parser and version resolver for Semantic Version
 
-for node
+## Installation
+
+#### for node (via npm)
 ```
 $ npm install u-version
 ```
 
-for the browser
+#### for the browser (via bower)
 ```
-$ npm install u-version
+$ bower install u-version
 ```
