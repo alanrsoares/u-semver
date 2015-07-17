@@ -43,7 +43,7 @@ SemVer.resolve('^1.0.0', versions) //=> '1.3.2'
 // resolving the latest version
 SemVer.resolve('latest', versions) //=> '1.3.2'
 // allow pre-release resolution
-SemVer.resolve('^0.1.0', versions, true) //=> '0.2.4'
+SemVer.resolve('^0.1.0', versions, true) //=> '0.2.4-pre'
 // deny pre-release resolution
 SemVer.resolve('^0.1.0', versions, false) //=> '0.2.0'
 ```
