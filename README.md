@@ -1,5 +1,7 @@
 # μ-semver
-A micro parser and version resolver for Semantic Version
+A micro parser and version resolver for Semantic Version (~1kb)
+
+[![npm module](https://badge.fury.io/js/u-semver.svg)](https://www.npmjs.org/package/u-semver)
 
 ## Installation
 
