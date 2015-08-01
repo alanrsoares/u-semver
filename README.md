@@ -7,17 +7,17 @@ A micro parser and version resolver for Semantic Version (~1kb)
 ## Installation
 
 ##### for node (via npm)
-```
+```bash
 $ npm install u-semver
 ```
 
 ##### for the browser (via bower)
-```
+```bash
 $ bower install u-semver
 ```
 
 ## Usage
-``` 
+```javascript
 SemVer.resolve(range: String, versions: String[], preRelease: Boolean?)
 ```
 ```javascript
