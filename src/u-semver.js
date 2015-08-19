@@ -26,7 +26,7 @@ const resolve = (range, versions, pre) => {
 
   return pre
     ? findPattern(versions, pattern + '(-(\\w+))?$')
-    : findPattern(versions, pattern + '$');
+    : findPattern(versions, pattern + '$') || resolve('latest', versions);
 };
 
 const SemVer = { resolve };

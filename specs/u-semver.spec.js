@@ -35,7 +35,8 @@ const cases = [
   ['^0.0.1', '0.2.4-pre', true],
   ['~0.0.1', '0.0.12'],
   ['~0.0.1', '0.0.13-pre', true],
-  ['latest', '1.3.2']
+  ['latest', '1.3.2'],
+  ['^2.0.0', '1.3.2']
 ];
 
 describe('Given a set of versions', () => {
