@@ -19,55 +19,31 @@ var findPattern = function findPattern(xs, pattern) {
   return findLatest(xs.filter(RX.test.bind(RX)));
 };
 
-var resolve = function resolve(_x, _x2, _x3) {
-  var _left;
-
-  var _again = true;
-
-  _function: while (_again) {
-    var range = _x,
-        versions = _x2,
-        pre = _x3;
-    VERSION_RX = _VERSION_RX$exec = _VERSION_RX$exec2 = root = prefix = major = minor = pattern = undefined;
-    _again = false;
-
-    if (range === 'latest') {
-      return findLatest(versions);
-    }
-
-    var VERSION_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+))?$/;
-
-    var _VERSION_RX$exec = VERSION_RX.exec(range);
-
-    var _VERSION_RX$exec2 = _slicedToArray(_VERSION_RX$exec, 4);
-
-    var root = _VERSION_RX$exec2[0];
-    var prefix = _VERSION_RX$exec2[1];
-    var major = _VERSION_RX$exec2[2];
-    var minor = _VERSION_RX$exec2[3];
-
-    if (!prefix) {
-      return find(versions, function (v) {
-        return v === root;
-      });
-    }
-
-    var pattern = prefix === '^' ? '^(' + major + ')\\.(\\d+)\\.(\\d+)' : '^(' + major + ').(' + minor + ')\\.(\\d+)';
-
-    if (pre) {
-      return findPattern(versions, pattern + '(-(\\w+))?$');
-    } else {
-      if (_left = findPattern(versions, pattern + '$')) {
-        return _left;
-      }
-
-      _x = 'latest';
-      _x2 = versions;
-      _x3 = undefined;
-      _again = true;
-      continue _function;
-    }
+var resolve = function resolve(range, versions, pre) {
+  if (range === 'latest') {
+    return findLatest(versions);
   }
+
+  var VERSION_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+))?$/;
+
+  var _VERSION_RX$exec = VERSION_RX.exec(range);
+
+  var _VERSION_RX$exec2 = _slicedToArray(_VERSION_RX$exec, 4);
+
+  var root = _VERSION_RX$exec2[0];
+  var prefix = _VERSION_RX$exec2[1];
+  var major = _VERSION_RX$exec2[2];
+  var minor = _VERSION_RX$exec2[3];
+
+  if (!prefix) {
+    return find(versions, function (v) {
+      return v === root;
+    });
+  }
+
+  var pattern = prefix === '^' ? '^(' + major + ')\\.(\\d+)\\.(\\d+)' : '^(' + major + ').(' + minor + ')\\.(\\d+)';
+
+  return pre ? findPattern(versions, pattern + '(-(\\w+))?$') : findPattern(versions, pattern + '$');
 };
 
 var SemVer = { resolve: resolve };
