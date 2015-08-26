@@ -1,6 +1,6 @@
 {
   "name": "u-semver",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "A micro parser and version resolver for Semantic Version",
   "main": "dist/u-semver.js",
   "scripts": {
