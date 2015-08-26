@@ -1,8 +1,19 @@
-let find = (xs, fn) => xs.filter(fn)[0];
+const semVerToNum = (x) =>
+  x.match(/(\d+).(\d+).(\d+)/)
+   .slice(1)
+   .reduce((acc, x, i) => +acc + +x * ([100000, 1000, 1][i]));
 
-let findLatest = (xs) => xs.sort().reverse()[0];
+const sortSemver = (a, b) => {
+  const [a1, b1] = [a, b].map(semVerToNum);
+  return a1 === b1
+    ? 0 : a1 < b1 ? -1 : 1;
+};
 
-let findPattern = (xs, pattern) => {
+const find = (xs, fn) => xs.filter(fn)[0];
+
+const findLatest = (xs) => xs.sort(sortSemver).reverse()[0];
+
+const findPattern = (xs, pattern) => {
   const RX = new RegExp(pattern);
   return findLatest(xs.filter(::RX.test));
 };
