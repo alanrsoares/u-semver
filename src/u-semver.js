@@ -1,7 +1,8 @@
 const semVerToNum = (x) =>
   x.match(/(\d+).(\d+).(\d+)/)
    .slice(1)
-   .reduce((acc, x, i) => +acc + +x * ([100000, 1000, 1][i]));
+   .map(m => +m)
+   .reduce((acc, x, i) => acc + x * ([1000000, 1000, 1])[i], 0);
 
 const sortSemver = (a, b) => {
   const [a1, b1] = [a, b].map(semVerToNum);
