@@ -1,5 +1,5 @@
 ./scripts/dist  && git add dist && git commit -m "build dist"
 releasy=./node_modules/.bin/releasy
-$releasy -qsf bower.json --stable --no-tag --no-push
-$releasy -s --stable
+$releasy $1 $2 -qsf bower.json --no-tag --no-push
+$releasy $1 $2 -s
 npm publish
