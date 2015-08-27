@@ -3,6 +3,7 @@ A micro parser and version resolver for Semantic Version (~1kb)
 
 [![npm module](https://badge.fury.io/js/u-semver.svg)](https://www.npmjs.org/package/u-semver)
 [![Bower version](https://badge.fury.io/bo/u-semver.svg)](http://badge.fury.io/bo/u-semver)
+[![Codeship](https://img.shields.io/codeship/ae382de0-234f-0132-2ac9-66ff9c0c3cf8.svg)]()
 
 ## Installation
 
