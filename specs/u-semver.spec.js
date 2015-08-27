@@ -55,6 +55,10 @@ const cases = [
   ['latest', '2.1.0-pre.13']
 ];
 
-describe('Given a set of versions', () => {
-  cases.map(runAssertion);
+describe('package: u-semver', () => {
+  describe('SemVer.resolve', () => {
+    describe('Given a set of versions', () => {
+      cases.map(runAssertion);
+    });
+  });
 });
