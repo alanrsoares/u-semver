@@ -17,7 +17,14 @@ const sortSemver = (a, b) => {
 
 const find = (xs, fn) => xs.filter(fn)[0];
 
-const findLatest = (xs) => xs.sort(sortSemver).reverse()[0];
+const isPreRelease = (x) => x && x.indexOf('-') >= 0;
+
+const findLatest = (xs) => {
+  let latest = xs.sort(sortSemver).reverse()[0];
+  return isPreRelease(latest)
+    ? find(xs, (x) => x === (latest.split('-')[0])) || latest
+    : latest;
+}
 
 const findPattern = (xs, pattern) => {
   const RX = new RegExp(pattern);
