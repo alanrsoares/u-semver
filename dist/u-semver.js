@@ -33,8 +33,15 @@ var find = function find(xs, fn) {
   return xs.filter(fn)[0];
 };
 
+var isPreRelease = function isPreRelease(x) {
+  return x && x.indexOf('-') >= 0;
+};
+
 var findLatest = function findLatest(xs) {
-  return xs.sort(sortSemver).reverse()[0];
+  var latest = xs.sort(sortSemver).reverse()[0];
+  return isPreRelease(latest) ? find(xs, function (x) {
+    return x === latest.split('-')[0];
+  }) || latest : latest;
 };
 
 var findPattern = function findPattern(xs, pattern) {
