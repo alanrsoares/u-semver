@@ -15,12 +15,14 @@ const VERSIONS = [
   '0.0.13-pre',
   '1.3.10',
   '1.3.9',
-  '1.3.7'
+  '1.3.7',
+  '1.3.12-pre.12',
+  '1.3.12-pre.4'
 ];
 
 let runAssertion = ([input, expected, pre]) => {
   let value = resolve(input, VERSIONS, pre);
-  it(`should resolve ${ input } to ${ expected }`, () => {
+  it(`should resolve ${ input } ${ pre ? '(pre)' : '' } to ${ expected }`, () => {
     expect(value).to.equal(expected);
   });
 };
@@ -38,9 +40,10 @@ const cases = [
   ['^0.0.1', '0.2.4-pre', true],
   ['~0.0.1', '0.0.12'],
   ['~0.0.1', '0.0.13-pre', true],
-  ['latest', '1.3.11'],
+  ['latest', '1.3.12-pre.12'],
   ['^1.0.0', '1.3.11'],
-  ['^1.3.0', '1.3.11']
+  ['~1.3.0', '1.3.11'],
+  ['^1.3.0', '1.3.12-pre.12', true]
 ];
 
 describe('Given a set of versions', () => {

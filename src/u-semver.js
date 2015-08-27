@@ -1,8 +1,13 @@
+const multipliers = [1000000, 1000, 10, 0, 1];
+
 const semVerToNum = (x) =>
-  x.match(/(\d+).(\d+).(\d+)/)
+  x.match(/^(\d+)\.(\d+)\.(\d+)(-(\w+)(\.(\d+))?)?$/)
    .slice(1)
    .map(m => +m)
-   .reduce((acc, x, i) => acc + x * ([1000000, 1000, 1])[i], 0);
+   .filter(m => !isNaN(m))
+   .reduce((acc, y, i) => {
+     return acc + y * multipliers[i]
+   }, 0);
 
 const sortSemver = (a, b) => {
   const [a1, b1] = [a, b].map(semVerToNum);
@@ -24,7 +29,7 @@ const resolve = (range, versions, pre) => {
     return findLatest(versions);
   }
 
-  const VERSION_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+))?$/;
+  const VERSION_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+)(\.(\d+))?)?$/;
 
   let [root, prefix, major, minor] = VERSION_RX.exec(range);
 
@@ -37,7 +42,7 @@ const resolve = (range, versions, pre) => {
     : `^(${ major })\.(${ minor })\\.(\\d+)`;
 
   return pre
-    ? findPattern(versions, pattern + '(-(\\w+))?$')
+    ? findPattern(versions, pattern + '(-(\\w+)(\\.(\\d+))?)?$')
     : findPattern(versions, pattern + '$');
 };
 
