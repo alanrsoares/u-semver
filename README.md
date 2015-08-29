@@ -19,7 +19,7 @@ $ bower install u-semver
 
 ## Usage
 ```javascript
-// SemVer.resolve(range: String, versions: String[], preRelease: Boolean?)
+SemVer.resolve(range: String, versions: String[], preRelease: Boolean?)
 ```
 ```javascript
 var versions = [
