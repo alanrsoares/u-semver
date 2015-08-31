@@ -1,13 +1,20 @@
+const VERSION_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+)(\.(\d+))?)?$/;
 const multipliers = [1000000, 1000, 10, 0, 1];
 
-const semVerToNum = (x) =>
-  x.match(/^(\d+)\.(\d+)\.(\d+)(-(\w+)(\.(\d+))?)?$/)
+const toValidIntMatches = (x) =>
+  x.match(VERSION_RX)
    .slice(1)
    .map(m => +m)
-   .filter(m => !isNaN(m))
-   .reduce((acc, y, i) => {
-     return acc + (y + 1) * multipliers[i]
-   }, 0);
+   .filter(m => !isNaN(m));
+
+const semVerToNum = (x) =>
+  toValidIntMatches(x)
+    .reduce((acc, y, i) => acc + (y + 1) * multipliers[i], 0);
+
+const filterVersion = (filters) => (x) =>
+  toValidIntMatches(x)
+    .reduce((acc, y, i) =>
+      acc && (filters[i] !== undefined ? y >= filters[i] : true), true);
 
 const sortSemver = (a, b) => {
   const [a1, b1] = [a, b].map(semVerToNum);
@@ -17,18 +24,18 @@ const sortSemver = (a, b) => {
 
 const find = (xs, fn) => xs.filter(fn)[0];
 
-const isPreRelease = (x) => x && x.indexOf('-') >= 0;
+const allowsPreRelease = (x) => x && x.indexOf('-') >= 0;
 
 const findLatest = (xs) => {
-  let latest = xs.sort(sortSemver).reverse()[0];
-  return isPreRelease(latest)
+  const latest = xs.sort(sortSemver).reverse()[0];
+  return allowsPreRelease(latest)
     ? find(xs, (x) => x === (latest.split('-')[0])) || latest
     : latest;
 }
 
-const findPattern = (xs, pattern) => {
+const findPattern = (xs, pattern, filters) => {
   const RX = new RegExp(pattern);
-  return findLatest(xs.filter(::RX.test));
+  return findLatest(xs.filter(::RX.test).filter(filterVersion(filters)));
 };
 
 const resolve = (range, versions, pre) => {
@@ -36,21 +43,22 @@ const resolve = (range, versions, pre) => {
     return findLatest(versions);
   }
 
-  const VERSION_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+)(\.(\d+))?)?$/;
-
-  let [root, prefix, major, minor] = VERSION_RX.exec(range);
+  const [root, prefix, major, minor, patch, partial, beta] = VERSION_RX.exec(range);
 
   if (!prefix) {
+    // match exact value
     return find(versions, (v) => v === root);
   }
 
-  let pattern = prefix === '^'
+  const pattern = prefix === '^'
     ? `^(${ major })\\.(\\d+)\\.(\\d+)`
     : `^(${ major })\.(${ minor })\\.(\\d+)`;
 
+  const filters = [major, minor, patch, partial, beta];
+
   return pre
-    ? findPattern(versions, pattern + '(-(\\w+)(\\.(\\d+))?)?$')
-    : findPattern(versions, pattern + '$');
+    ? findPattern(versions, pattern + '(-(\\w+)(\\.(\\d+))?)?$', filters)
+    : findPattern(versions, pattern + '$', filters);
 };
 
 const SemVer = { resolve };

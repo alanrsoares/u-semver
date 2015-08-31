@@ -30,7 +30,7 @@ const VERSIONS = [
 
 let runAssertion = ([input, expected, pre]) => {
   let value = resolve(input, VERSIONS, pre);
-  it(`should resolve ${ input } ${ pre ? '(pre)' : '' } to ${ expected }`, () => {
+  it(`should resolve ${ input }${ pre ? ' (pre) ' : ' ' }to ${ expected }`, () => {
     expect(value).to.equal(expected);
   });
 };
@@ -41,6 +41,8 @@ const cases = [
   ['1.0.0', '1.0.0'],
   ['1.0.1', '1.0.1'],
   ['1.3.2', '1.3.2'],
+  ['^1.3.12', undefined],
+  ['^1.3.12', '1.3.12-pre.12', true],
   ['^0.1.0', '0.2.0'],
   ['~1.0.0', '1.0.1'],
   ['~0.1.0', '0.1.1-alpha', true],
