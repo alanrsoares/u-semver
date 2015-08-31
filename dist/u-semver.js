@@ -14,7 +14,7 @@ var semVerToNum = function semVerToNum(x) {
   }).filter(function (m) {
     return !isNaN(m);
   }).reduce(function (acc, y, i) {
-    return acc + y * multipliers[i];
+    return acc + (y + 1) * multipliers[i];
   }, 0);
 };
 
