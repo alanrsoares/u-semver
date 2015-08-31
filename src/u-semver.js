@@ -6,7 +6,7 @@ const semVerToNum = (x) =>
    .map(m => +m)
    .filter(m => !isNaN(m))
    .reduce((acc, y, i) => {
-     return acc + y * multipliers[i]
+     return acc + (y + 1) * multipliers[i]
    }, 0);
 
 const sortSemver = (a, b) => {
