@@ -52,7 +52,7 @@ const resolve = (range, versions, pre) => {
 
   const pattern = prefix === '^'
     ? `^(${ major })\\.(\\d+)\\.(\\d+)`
-    : `^(${ major })\.(${ minor })\\.(\\d+)`;
+    : `^(${ major })\\.(${ minor })\\.(\\d+)`;
 
   const filters = [major, minor, patch, partial, beta];
 
