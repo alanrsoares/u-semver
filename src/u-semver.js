@@ -7,41 +7,41 @@ const toValidIntMatches = (x) =>
    .map(m => +m)
    .filter(m => !isNaN(m));
 
-const semVerToNum = (x) => {
-  const matches = toValidIntMatches(x);
-  let acc = 0;
-  matches.forEach((y, i) => acc += (y + 1) * multipliers[i]);
-  return acc;
-}
-
 const filterVersion = (filters) => (x) =>
   toValidIntMatches(x)
     .reduce((acc, y, i) =>
       acc && (filters[i] !== undefined ? y >= filters[i] : true), true);
 
-const sortSemver = (a, b) => {
-  const [a1, b1] = [a, b].map(semVerToNum);
-  return a1 === b1
-    ? 0 : a1 < b1 ? -1 : 1;
-};
-
 const find = (xs, fn) => xs.filter(fn)[0];
 
 const allowsPreRelease = (x) => x && x.indexOf('-') >= 0;
 
-const findLatest = (xs) => {
+function semVerToNum(x) {
+  const match = toValidIntMatches(x);
+  let acc = 0;
+  match.forEach((y, i) => acc += (y + 1) * multipliers[i]);
+  return acc;
+}
+
+function sortSemver(a, b) {
+  const [a1, b1] = [a, b].map(semVerToNum);
+  return a1 === b1
+    ? 0 : a1 < b1 ? -1 : 1;
+}
+
+function findLatest(xs) {
   const latest = xs.sort(sortSemver).reverse()[0];
   return allowsPreRelease(latest)
     ? find(xs, (x) => x === (latest.split('-')[0])) || latest
     : latest;
 }
 
-const findPattern = (xs, pattern, filters) => {
+function findPattern(xs, pattern, filters) {
   const RX = new RegExp(pattern);
   return findLatest(xs.filter(::RX.test).filter(filterVersion(filters)));
-};
+}
 
-const resolve = (range, versions, pre) => {
+function resolve(range, versions, pre) {
   if (range === 'latest') {
     return findLatest(versions);
   }
@@ -62,7 +62,7 @@ const resolve = (range, versions, pre) => {
   return pre
     ? findPattern(versions, pattern + '(-(\\w+)(\\.(\\d+))?)?$', filters)
     : findPattern(versions, pattern + '$', filters);
-};
+}
 
 const SemVer = { resolve };
 
