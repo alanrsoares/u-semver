@@ -17,29 +17,12 @@ var toValidIntMatches = function toValidIntMatches(x) {
   });
 };
 
-var semVerToNum = function semVerToNum(x) {
-  return toValidIntMatches(x).reduce(function (acc, y, i) {
-    return acc + (y + 1) * multipliers[i];
-  }, 0);
-};
-
 var filterVersion = function filterVersion(filters) {
   return function (x) {
     return toValidIntMatches(x).reduce(function (acc, y, i) {
       return acc && (filters[i] !== undefined ? y >= filters[i] : true);
     }, true);
   };
-};
-
-var sortSemver = function sortSemver(a, b) {
-  var _map = [a, b].map(semVerToNum);
-
-  var _map2 = _slicedToArray(_map, 2);
-
-  var a1 = _map2[0];
-  var b1 = _map2[1];
-
-  return a1 === b1 ? 0 : a1 < b1 ? -1 : 1;
 };
 
 var find = function find(xs, fn) {
@@ -50,19 +33,39 @@ var allowsPreRelease = function allowsPreRelease(x) {
   return x && x.indexOf('-') >= 0;
 };
 
-var findLatest = function findLatest(xs) {
+function semVerToNum(x) {
+  var match = toValidIntMatches(x);
+  var acc = 0;
+  match.forEach(function (y, i) {
+    return acc += (y + 1) * multipliers[i];
+  });
+  return acc;
+}
+
+function sortSemver(a, b) {
+  var _map = [a, b].map(semVerToNum);
+
+  var _map2 = _slicedToArray(_map, 2);
+
+  var a1 = _map2[0];
+  var b1 = _map2[1];
+
+  return a1 === b1 ? 0 : a1 < b1 ? -1 : 1;
+}
+
+function findLatest(xs) {
   var latest = xs.sort(sortSemver).reverse()[0];
   return allowsPreRelease(latest) ? find(xs, function (x) {
     return x === latest.split('-')[0];
   }) || latest : latest;
-};
+}
 
-var findPattern = function findPattern(xs, pattern, filters) {
+function findPattern(xs, pattern, filters) {
   var RX = new RegExp(pattern);
   return findLatest(xs.filter(RX.test.bind(RX)).filter(filterVersion(filters)));
-};
+}
 
-var resolve = function resolve(range, versions, pre) {
+function resolve(range, versions, pre) {
   if (range === 'latest') {
     return findLatest(versions);
   }
@@ -86,12 +89,12 @@ var resolve = function resolve(range, versions, pre) {
     });
   }
 
-  var pattern = prefix === '^' ? '^(' + major + ')\\.(\\d+)\\.(\\d+)' : '^(' + major + ').(' + minor + ')\\.(\\d+)';
+  var pattern = prefix === '^' ? '^(' + major + ')\\.(\\d+)\\.(\\d+)' : '^(' + major + ')\\.(' + minor + ')\\.(\\d+)';
 
   var filters = [major, minor, patch, partial, beta];
 
   return pre ? findPattern(versions, pattern + '(-(\\w+)(\\.(\\d+))?)?$', filters) : findPattern(versions, pattern + '$', filters);
-};
+}
 
 var SemVer = { resolve: resolve };
 
