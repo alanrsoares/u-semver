@@ -7,9 +7,12 @@ const toValidIntMatches = (x) =>
    .map(m => +m)
    .filter(m => !isNaN(m));
 
-const semVerToNum = (x) =>
-  toValidIntMatches(x)
-    .reduce((acc, y, i) => acc + (y + 1) * multipliers[i], 0);
+const semVerToNum = (x) => {
+  const matches = toValidIntMatches(x);
+  let acc = 0;
+  matches.forEach((y, i) => acc += (y + 1) * multipliers[i]);
+  return acc;
+}
 
 const filterVersion = (filters) => (x) =>
   toValidIntMatches(x)
