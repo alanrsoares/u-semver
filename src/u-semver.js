@@ -1,4 +1,5 @@
 const SEMVER_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+)(\.(\d+))?)?$/
+const BASE_SEMVER_RX = /^(\d+).(\d+).(\d+)/
 const MULTIPLIERS = [1000000, 1000, 10, 0, 1]
 
 const find = (xs, fn) => xs.filter(fn)[0]
@@ -9,21 +10,22 @@ const and = (f, xs) => xs.reduce((acc, x) => acc && f(x), true)
 const toValidIntMatches = (x) =>
   x.match(SEMVER_RX)
    .slice(1)
-   .map(m => +m)
-   .filter(m => !isNaN(m))
+   .map((m) => +m)
+   .filter((m) => !isNaN(m))
 
 const filterVersion = (filters) => (x) =>
   toValidIntMatches(x)
     .reduce((acc, y, i) =>
       acc && (filters[i] !== undefined ? y >= filters[i] : true), true)
 
-const isPreRelease = ::/(alpha|beta)/.test
+const isPreRelease = (x) => /(alpha|beta)/.test(x)
 const arePreReleases = (xs) => and(isPreRelease, xs)
 const allowsPreRelease = (x) => x && x.indexOf('-') >= 0
+const getBaseSemVer = (x) => x.match(BASE_SEMVER_RX)[0]
 
 function semVerToNum (x) {
   const matches = toValidIntMatches(x)
-  const reducer = (acc, y, i) => acc += y * MULTIPLIERS[i]
+  const reducer = (acc, y, i) => acc + y * MULTIPLIERS[i]
   return matches.reduce(reducer, 0)
 }
 
@@ -52,7 +54,7 @@ function findLatest (xs) {
 
 function findPattern (xs, pattern, filters) {
   const RX = new RegExp(pattern)
-  return findLatest(xs.filter(::RX.test).filter(filterVersion(filters)))
+  return findLatest(xs.filter((x) => RX.test(x)).filter(filterVersion(filters)))
 }
 
 function resolve (range, versions, pre) {
@@ -68,8 +70,8 @@ function resolve (range, versions, pre) {
   }
 
   const pattern = prefix === '^'
-    ? `^(${ major })\\.(\\d+)\\.(\\d+)`
-    : `^(${ major })\\.(${ minor })\\.(\\d+)`
+    ? `^(${major})\\.(\\d+)\\.(\\d+)`
+    : `^(${major})\\.(${minor})\\.(\\d+)`
 
   const filters = [major, minor, patch, partial, beta]
 
