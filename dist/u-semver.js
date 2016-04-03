@@ -6,9 +6,8 @@ Object.defineProperty(exports, '__esModule', {
 
 var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
-var _context;
-
 var SEMVER_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+)(\.(\d+))?)?$/;
+var BASE_SEMVER_RX = /^(\d+).(\d+).(\d+)/;
 var MULTIPLIERS = [1000000, 1000, 10, 0, 1];
 
 var find = function find(xs, fn) {
@@ -42,18 +41,23 @@ var filterVersion = function filterVersion(filters) {
   };
 };
 
-var isPreRelease = (_context = /(alpha|beta)/).test.bind(_context);
+var isPreRelease = function isPreRelease(x) {
+  return /(alpha|beta)/.test(x);
+};
 var arePreReleases = function arePreReleases(xs) {
   return and(isPreRelease, xs);
 };
 var allowsPreRelease = function allowsPreRelease(x) {
   return x && x.indexOf('-') >= 0;
 };
+var getBaseSemVer = function getBaseSemVer(x) {
+  return x.match(BASE_SEMVER_RX)[0];
+};
 
 function semVerToNum(x) {
   var matches = toValidIntMatches(x);
   var reducer = function reducer(acc, y, i) {
-    return acc += y * MULTIPLIERS[i];
+    return acc + y * MULTIPLIERS[i];
   };
   return matches.reduce(reducer, 0);
 }
@@ -96,7 +100,9 @@ function findLatest(xs) {
 
 function findPattern(xs, pattern, filters) {
   var RX = new RegExp(pattern);
-  return findLatest(xs.filter(RX.test.bind(RX)).filter(filterVersion(filters)));
+  return findLatest(xs.filter(function (x) {
+    return RX.test(x);
+  }).filter(filterVersion(filters)));
 }
 
 function resolve(range, versions, pre) {
