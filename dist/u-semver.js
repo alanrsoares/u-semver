@@ -58,6 +58,10 @@ function semVerToNum(x) {
   return matches.reduce(reducer, 0);
 }
 
+var sort = function sort(xs) {
+  return xs.sort(sortSemVer);
+};
+
 function sortSemVer(a, b) {
   var _map = [a, b].map(semVerToNum);
 
@@ -83,7 +87,7 @@ function sortSemVer(a, b) {
 }
 
 function findLatest(xs) {
-  var sorted = xs.sort(sortSemVer);
+  var sorted = sort(xs);
   var latest = last(sorted);
   return allowsPreRelease(latest) ? find(xs, function (x) {
     return x === latest.split('-')[0];
@@ -126,7 +130,10 @@ function resolve(range, versions, pre) {
   return pre ? findPattern(versions, pattern + '(-(\\w+)(\\.(\\d+))?)?$', filters) : findPattern(versions, pattern + '$', filters);
 }
 
-var SemVer = { resolve: resolve };
+var SemVer = {
+  resolve: resolve,
+  sort: sort
+};
 
 exports['default'] = SemVer;
 module.exports = exports['default'];
