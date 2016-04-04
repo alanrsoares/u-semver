@@ -29,7 +29,7 @@ function semVerToNum (x) {
   return matches.reduce(reducer, 0)
 }
 
-export const sort = (xs) => [...xs].sort(sortSemVer)
+export const sort = (xs) => xs.slice().sort(sortSemVer)
 
 function sortSemVer (a, b) {
   const [valueA, valueB] = [a, b].map(semVerToNum)

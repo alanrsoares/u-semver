@@ -56,18 +56,6 @@
     };
   })();
 
-  function _toConsumableArray(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
-        arr2[i] = arr[i];
-      }
-
-      return arr2;
-    } else {
-      return Array.from(arr);
-    }
-  }
-
   var SEMVER_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+)(\.(\d+))?)?$/;
   var BASE_SEMVER_RX = /^(\d+).(\d+).(\d+)/;
   var MULTIPLIERS = [1000000, 1000, 10, 0, 1];
@@ -120,7 +108,7 @@
   }
 
   var sort = exports.sort = function sort(xs) {
-    return [].concat(_toConsumableArray(xs)).sort(sortSemVer);
+    return xs.slice().sort(sortSemVer);
   };
 
   function sortSemVer(a, b) {
