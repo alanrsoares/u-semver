@@ -2,16 +2,17 @@ const SEMVER_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+)(\.(\d+))?)?$/
 const BASE_SEMVER_RX = /^(\d+).(\d+).(\d+)/
 const MULTIPLIERS = [1000000, 1000, 10, 0, 1]
 
-const find = (xs, fn) => xs.filter(fn)[0]
+const first = (xs) => xs[0]
 const last = (xs) => xs[xs.length - 1]
-const contains = (x, s) => x.indexOf(s) > -1
-const and = (f, xs) => xs.reduce((acc, x) => acc && f(x), true)
+const find = (f, xs) => first(xs.filter(f))
+const isNumber = (x) => !isNaN(x)
+const toInt = (x) => +x
 
 const toValidIntMatches = (x) =>
   x.match(SEMVER_RX)
    .slice(1)
-   .map((m) => +m)
-   .filter((m) => !isNaN(m))
+   .map(toInt)
+   .filter(isNumber)
 
 const filterVersion = (filters) => (x) =>
   toValidIntMatches(x)
@@ -19,7 +20,6 @@ const filterVersion = (filters) => (x) =>
       acc && (filters[i] !== undefined ? y >= filters[i] : true), true)
 
 const isPreRelease = (x) => /(alpha|beta)/.test(x)
-const arePreReleases = (xs) => and(isPreRelease, xs)
 const allowsPreRelease = (x) => x && x.indexOf('-') >= 0
 const getBaseSemVer = (x) => x.match(BASE_SEMVER_RX)[0]
 
@@ -29,34 +29,39 @@ function semVerToNum (x) {
   return matches.reduce(reducer, 0)
 }
 
-const sort = (xs) => xs.sort(sortSemVer)
+const sort = (xs) => [...xs].sort(sortSemVer)
 
 function sortSemVer (a, b) {
-  const [a1, b1] = [a, b].map(semVerToNum)
+  const [valueA, valueB] = [a, b].map(semVerToNum)
+  const [baseA, baseB] = [a, b].map(getBaseSemVer)
 
-  if (arePreReleases([a, b])) {
-    const [a2, b2] = [a, b].map(getBaseSemVer)
-    if (a2 === b2 && (contains(a, 'beta') && contains(b, 'alpha'))) {
+  // check pre-release precedence when bases are equal
+  if (baseA === baseB) {
+    if (/beta/.test(a) && /alpha/.test(b)) {
       return 1
+    }
+    if ((/alpha/.test(a) && /beta/.test(b)) ||
+        (isPreRelease(a) && !isPreRelease(b))) {
+      return -1
     }
   }
 
-  return a1 - b1
+  return valueA - valueB
 }
 
 function findLatest (xs) {
   const sorted = sort(xs)
   const latest = last(sorted)
   return allowsPreRelease(latest)
-    ? find(xs, (x) => x === (latest.split('-')[0])) || latest
+    ? find((x) => x === (latest.split('-')[0]), xs) || latest
     : latest
 }
 
-function findPattern (xs, pattern, filters) {
-  const RX = new RegExp(pattern)
-  return findLatest(xs.filter((x) => RX.test(x)).filter(filterVersion(filters)))
-}
+const findPattern  = (xs, pattern, filters) =>
+  findLatest(xs.filter((x) => RegExp(pattern).test(x))
+               .filter(filterVersion(filters)))
 
+// (range: string, versions: list<string>, pre: boolean) -> string
 function resolve (range, versions, pre) {
   if (range === 'latest') {
     return findLatest(versions)
@@ -66,7 +71,7 @@ function resolve (range, versions, pre) {
 
   if (!prefix) {
     // match exact value
-    return find(versions, (v) => v === root)
+    return find((v) => v === root, versions)
   }
 
   const pattern = prefix === '^'

@@ -82,7 +82,7 @@ function sortSemVer(a, b) {
     var a2 = _map32[0];
     var b2 = _map32[1];
 
-    if (a2 === b2 && (contains(a, 'beta') && contains(b, 'alpha'))) {
+    if (and(a2 === b2, contains(a, 'beta'), contains(b, 'alpha'))) {
       return 1;
     }
   }
