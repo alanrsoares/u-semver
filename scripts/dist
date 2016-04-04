@@ -1,9 +1,0 @@
-rm -rf dist && mkdir dist
-babel=./node_modules/.bin/babel
-uglifyjs=./node_modules/.bin/uglifyjs
-$babel src/u-semver.js -o dist/u-semver.js &&\
-cat dist/u-semver.js\
-| sed -e '/^module.exports/d'\
-| sed -e '/exports\[/d'\
-| sed -e 's/exports/{}/g'\
-| $uglifyjs --screw-ie8 -cmo dist/u-semver.browser.js -

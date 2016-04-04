@@ -29,7 +29,7 @@ function semVerToNum (x) {
   return matches.reduce(reducer, 0)
 }
 
-const sort = (xs) => [...xs].sort(sortSemVer)
+export const sort = (xs) => [...xs].sort(sortSemVer)
 
 function sortSemVer (a, b) {
   const [valueA, valueB] = [a, b].map(semVerToNum)
@@ -62,7 +62,7 @@ const findPattern  = (xs, pattern, filters) =>
                .filter(filterVersion(filters)))
 
 // (range: string, versions: list<string>, pre: boolean) -> string
-function resolve (range, versions, pre) {
+export function resolve (range, versions, pre) {
   if (range === 'latest') {
     return findLatest(versions)
   }
@@ -84,10 +84,3 @@ function resolve (range, versions, pre) {
     ? findPattern(versions, pattern + '(-(\\w+)(\\.(\\d+))?)?$', filters)
     : findPattern(versions, pattern + '$', filters)
 }
-
-const SemVer = {
-  resolve,
-  sort
-}
-
-export default SemVer
