@@ -6,31 +6,30 @@ Object.defineProperty(exports, '__esModule', {
 
 var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
 var SEMVER_RX = /^([\^\~])?(\d+)\.(\d+)\.(\d+)(-(\w+)(\.(\d+))?)?$/;
 var BASE_SEMVER_RX = /^(\d+).(\d+).(\d+)/;
 var MULTIPLIERS = [1000000, 1000, 10, 0, 1];
 
-var find = function find(xs, fn) {
-  return xs.filter(fn)[0];
+var first = function first(xs) {
+  return xs[0];
 };
 var last = function last(xs) {
   return xs[xs.length - 1];
 };
-var contains = function contains(x, s) {
-  return x.indexOf(s) > -1;
+var find = function find(f, xs) {
+  return first(xs.filter(f));
 };
-var and = function and(f, xs) {
-  return xs.reduce(function (acc, x) {
-    return acc && f(x);
-  }, true);
+var isNumber = function isNumber(x) {
+  return !isNaN(x);
+};
+var toInt = function toInt(x) {
+  return +x;
 };
 
 var toValidIntMatches = function toValidIntMatches(x) {
-  return x.match(SEMVER_RX).slice(1).map(function (m) {
-    return +m;
-  }).filter(function (m) {
-    return !isNaN(m);
-  });
+  return x.match(SEMVER_RX).slice(1).map(toInt).filter(isNumber);
 };
 
 var filterVersion = function filterVersion(filters) {
@@ -43,9 +42,6 @@ var filterVersion = function filterVersion(filters) {
 
 var isPreRelease = function isPreRelease(x) {
   return /(alpha|beta)/.test(x);
-};
-var arePreReleases = function arePreReleases(xs) {
-  return and(isPreRelease, xs);
 };
 var allowsPreRelease = function allowsPreRelease(x) {
   return x && x.indexOf('-') >= 0;
@@ -63,7 +59,7 @@ function semVerToNum(x) {
 }
 
 var sort = function sort(xs) {
-  return xs.sort(sortSemVer);
+  return [].concat(_toConsumableArray(xs)).sort(sortSemVer);
 };
 
 function sortSemVer(a, b) {
@@ -71,40 +67,44 @@ function sortSemVer(a, b) {
 
   var _map2 = _slicedToArray(_map, 2);
 
-  var a1 = _map2[0];
-  var b1 = _map2[1];
+  var valueA = _map2[0];
+  var valueB = _map2[1];
 
-  if (arePreReleases([a, b])) {
-    var _map3 = [a, b].map(getBaseSemVer);
+  var _map3 = [a, b].map(getBaseSemVer);
 
-    var _map32 = _slicedToArray(_map3, 2);
+  var _map32 = _slicedToArray(_map3, 2);
 
-    var a2 = _map32[0];
-    var b2 = _map32[1];
+  var baseA = _map32[0];
+  var baseB = _map32[1];
 
-    if (and(a2 === b2, contains(a, 'beta'), contains(b, 'alpha'))) {
+  // check pre-release precedence when bases are equal
+  if (baseA === baseB) {
+    if (/beta/.test(a) && /alpha/.test(b)) {
       return 1;
+    }
+    if (/alpha/.test(a) && /beta/.test(b) || isPreRelease(a) && !isPreRelease(b)) {
+      return -1;
     }
   }
 
-  return a1 - b1;
+  return valueA - valueB;
 }
 
 function findLatest(xs) {
   var sorted = sort(xs);
   var latest = last(sorted);
-  return allowsPreRelease(latest) ? find(xs, function (x) {
+  return allowsPreRelease(latest) ? find(function (x) {
     return x === latest.split('-')[0];
-  }) || latest : latest;
+  }, xs) || latest : latest;
 }
 
-function findPattern(xs, pattern, filters) {
-  var RX = new RegExp(pattern);
+var findPattern = function findPattern(xs, pattern, filters) {
   return findLatest(xs.filter(function (x) {
-    return RX.test(x);
+    return RegExp(pattern).test(x);
   }).filter(filterVersion(filters)));
-}
+};
 
+// (range: string, versions: list<string>, pre: boolean) -> string
 function resolve(range, versions, pre) {
   if (range === 'latest') {
     return findLatest(versions);
@@ -124,9 +124,9 @@ function resolve(range, versions, pre) {
 
   if (!prefix) {
     // match exact value
-    return find(versions, function (v) {
+    return find(function (v) {
       return v === root;
-    });
+    }, versions);
   }
 
   var pattern = prefix === '^' ? '^(' + major + ')\\.(\\d+)\\.(\\d+)' : '^(' + major + ')\\.(' + minor + ')\\.(\\d+)';
